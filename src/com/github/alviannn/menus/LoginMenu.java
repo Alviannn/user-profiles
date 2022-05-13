@@ -118,7 +118,7 @@ public class LoginMenu extends JFrame implements ActionListener {
                 return;
             }
 
-            User foundUser = Main.findUser(username);
+            User foundUser = Main.USER_HANDLER.findUser(username);
             if (foundUser == null || !foundUser.getPassword().equals(password)) {
                 JOptionPane.showMessageDialog(
                         this,

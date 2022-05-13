@@ -130,7 +130,7 @@ public class RegisterMenu extends JFrame implements ActionListener {
                 return;
             }
 
-            boolean foundSameUser = Main.doesUserExists(username, email);
+            boolean foundSameUser = Main.USER_HANDLER.doesUserExists(username, email);
             if (foundSameUser) {
                 JOptionPane.showMessageDialog(
                         this,
@@ -155,7 +155,7 @@ public class RegisterMenu extends JFrame implements ActionListener {
             }
 
             User user = new User(username, email, password);
-            Main.USER_LIST.add(user);
+            Main.USER_HANDLER.registerUser(user);
 
             this.dispose();
             new LoginMenu();
