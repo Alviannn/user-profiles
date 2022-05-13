@@ -38,7 +38,7 @@ public class DashboardMenu extends JFrame implements ActionListener {
         String[] columns = {"Username", "Email", "Password"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
-        List<User> userList = Main.USER_LIST;
+        List<User> userList = Main.USER_HANDLER.getUsers();
         for (User user : userList) {
             Object[] data = {user.getUsername(), user.getEmail(), user.getPassword()};
             model.addRow(data);
@@ -46,6 +46,21 @@ public class DashboardMenu extends JFrame implements ActionListener {
 
         userTable = new JTable(model);
         JScrollPane scrollPane = new JScrollPane(userTable);
+
+        userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        userTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int row = userTable.getSelectedRow();
+
+                String username = (String) userTable.getValueAt(row, 0);
+                String email = (String) userTable.getValueAt(row, 1);
+
+                rowValue.setText(row + "");
+                usernameValue.setText(username);
+                emailValue.setText(email);
+            }
+        });
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setBorder(BorderFactory.createEmptyBorder(
@@ -155,7 +170,26 @@ public class DashboardMenu extends JFrame implements ActionListener {
             this.dispose();
             new LoginMenu();
         } else if (e.getSource() == deleteBtn) {
+            int row = userTable.getSelectedRow();
+            if (row == -1) {
+                return;
+            }
 
+            String username = usernameValue.getText();
+            if (currentUser.getUsername().equals(username)) {
+                JOptionPane.showMessageDialog(null, "Cannot delete yourself", "ERROR", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // DefaultTableModel == TableModel
+            DefaultTableModel model = (DefaultTableModel) userTable.getModel();
+            model.removeRow(row);
+
+            rowValue.setText("");
+            usernameValue.setText("");
+            emailValue.setText("");
+
+            Main.USER_HANDLER.deleteUser(username);
         }
     }
 
